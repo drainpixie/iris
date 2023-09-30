@@ -59,8 +59,17 @@ double JaroWinklerDistance(std::string s1, std::string s2) {
          3.0;
 }
 
-void RenderItems(const std::vector<std::string> &items,
-                 const std::string &input) {
+void InitializeScreen() {
+  initscr();
+
+  cbreak();
+  keypad(stdscr, true);
+  curs_set(false);
+  set_escdelay(0);
+}
+
+void DisplayScreen(const std::vector<std::string> &items,
+                   const std::string &input) {
   std::vector<std::pair<double, std::string>> itemDistances;
 
   for (auto &&item : items) {
@@ -88,23 +97,29 @@ void RenderItems(const std::vector<std::string> &items,
   }
 }
 
-int main() {
-  initscr();
-
-  cbreak();
-  keypad(stdscr, true);
-  curs_set(false);
-  set_escdelay(0);
+int main(int argc, char *argv[]) {
+  InitializeScreen();
 
   int ch;
   int current = 0;
 
   std::string input;
-  std::vector<std::string> words = {"Hello", "World", "Foo", "Bar",
-                                    "Hallo", "Welt",  "Fee", "Baz"};
+  std::vector<std::string> words;
+
+  if (argc > 1) {
+    for (int i = 1; i < argc; i++) {
+      words.push_back(argv[i]);
+    }
+  } else {
+    std::string word;
+
+    while (std::cin >> word) {
+      words.push_back(word);
+    }
+  }
 
   while (true) {
-    RenderItems(words, input);
+    DisplayScreen(words, input);
 
     mvprintw(words.size(), 0, "find: %s", input.c_str());
 
