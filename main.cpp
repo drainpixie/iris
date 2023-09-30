@@ -1,6 +1,10 @@
 #include <algorithm>
+#include <cstddef>
+#include <cstdlib>
+#include <fcntl.h>
 #include <iostream>
 #include <ncurses.h>
+#include <stddef.h>
 #include <string>
 #include <unistd.h>
 #include <vector>
@@ -12,17 +16,17 @@ double JaroWinklerDistance(std::string s1, std::string s2) {
   if (s1 == s2)
     return 1.0;
 
-  const std::string::size_type m = s1.size();
-  const std::string::size_type n = s2.size();
-  const std::string::size_type max_distance = std::max(m, n) / 2 - 1;
+  const size_t m = s1.size();
+  const size_t n = s2.size();
+  const size_t max_distance = std::max(m, n) / 2 - 1;
 
-  std::string::size_type match = 0;
+  size_t match = 0;
 
   std::string hash_m(m, '0');
   std::string hash_n(n, '0');
 
-  for (std::string::size_type i = 0; i < m; ++i) {
-    for (std::string::size_type j =
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j =
              std::max(0, static_cast<int>(i) - static_cast<int>(max_distance));
          j < std::min(n, i + max_distance + 1); ++j) {
 
@@ -39,10 +43,10 @@ double JaroWinklerDistance(std::string s1, std::string s2) {
   if (match == 0)
     return 0.0;
 
-  std::string::size_type transpositions = 0;
-  std::string::size_type point = 0;
+  size_t transpositions = 0;
+  size_t point = 0;
 
-  for (std::string::size_type i = 0; i < m; ++i) {
+  for (size_t i = 0; i < m; ++i) {
     if (hash_m[i] == '1') {
       while (hash_n[point] == '0')
         point++;
@@ -70,7 +74,7 @@ void InitializeScreen() {
 }
 
 void DisplayScreen(const std::vector<std::string> &items,
-                 const std::string &input) {
+                   const std::string &input) {
   std::vector<std::pair<double, std::string>> itemDistances;
 
   for (auto &&item : items) {
@@ -86,7 +90,7 @@ void DisplayScreen(const std::vector<std::string> &items,
 
   clear();
 
-  std::string::size_type max_display_items = LINES - 1; // 1 for the input line
+  size_t max_display_items = LINES - 1; // 1 for the input line
 
   for (std::vector<std::pair<double, std::string>>::size_type i = 0;
        i < itemDistances.size() && i < max_display_items; i++) {
@@ -100,9 +104,9 @@ void DisplayScreen(const std::vector<std::string> &items,
   }
 }
 
-int main(int argc, char *argv[]) {
-  InitializeScreen();
 
+
+int main(int argc, char *argv[]) {
   int ch;
   int current = 0;
 
@@ -114,12 +118,22 @@ int main(int argc, char *argv[]) {
       words.push_back(argv[i]);
     }
   } else {
-    std::string word;
+    std::string line;
 
-    while (std::cin >> word) {
-      words.push_back(word);
+    while (std::getline(std::cin, line)) {
+      words.push_back(line);
     }
   }
+
+  close(STDIN_FILENO);
+
+  int fd = open("/dev/tty", O_RDONLY);
+  if (fd < 0) exit(EXIT_FAILURE);
+
+  int result = dup2(fd, STDIN_FILENO);
+  if (result < 0) exit(EXIT_FAILURE);
+
+  InitializeScreen();
 
   while (true) {
     DisplayScreen(words, input);
@@ -140,6 +154,8 @@ int main(int argc, char *argv[]) {
     case 27: // escape
       endwin();
       return EXIT_SUCCESS;
+    case KEY_BACKSPACE:
+    case KEY_DC:
     case 127: // backspace
       if (!input.empty())
         input.pop_back();
