@@ -1,0 +1,19 @@
+* 🌺 iris
+
+# [[.github/assets/scrot.png]]
+
+a small command-line tool for fuzzy finding
+
+* 🖥️ dev
+
+this project depens on =clang= and =make=.
+we also provide a =manifest.scm= for =guix= users.
+
+#+begin_src sh
+$ guix shell -m manifest.scm
+$ make
+#+end_src
+
+* 📑 todo
++ [ ] add a gif
++ [ ] add several backends (jaro, levenshtein, etc)
