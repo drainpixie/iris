@@ -6,7 +6,7 @@ a small command-line tool for fuzzy finding
 
 * 🖥️ dev
 
-this project depens on =clang= and =make=.
+this project depends on =clang= and =make=.
 we also provide a =manifest.scm= for =guix= users.
 
 #+begin_src sh
