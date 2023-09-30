@@ -4,15 +4,15 @@
 #include <string>
 #include <vector>
 
-double JaroWinklerDistance(std::string first, std::string second) {
-  std::transform(first.begin(), first.end(), first.begin(), ::tolower);
-  std::transform(second.begin(), second.end(), second.begin(), ::tolower);
+double JaroWinklerDistance(std::string s1, std::string s2) {
+  std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
+  std::transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
 
-  if (first == second)
+  if (s1 == s2)
     return 1.0;
 
-  const std::string::size_type m = first.size();
-  const std::string::size_type n = second.size();
+  const std::string::size_type m = s1.size();
+  const std::string::size_type n = s2.size();
   const std::string::size_type max_distance = std::max(m, n) / 2 - 1;
 
   std::string::size_type match = 0;
@@ -26,7 +26,7 @@ double JaroWinklerDistance(std::string first, std::string second) {
          j < std::min(n, i + max_distance + 1); ++j) {
 
       // If there is a match
-      if (first[i] == second[j] && hash_n[j] == '0') {
+      if (s1[i] == s2[j] && hash_n[j] == '0') {
         hash_m[i] = '1';
         hash_n[j] = '1';
         match++;
@@ -46,7 +46,7 @@ double JaroWinklerDistance(std::string first, std::string second) {
       while (hash_n[point] == '0')
         point++;
 
-      if (first[i] != second[point++])
+      if (s1[i] != s2[point++])
         transpositions++;
 
       point++;
