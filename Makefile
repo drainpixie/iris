@@ -1,5 +1,6 @@
 CXX      := clang++
 CXXFLAGS := -std=c++11 -fsanitize=address -Wall -Wextra -g
+CXXFLAGS += -lncurses
 
 SRCS     := $(wildcard *.cpp)
 OBJS     := $(SRCS:.cpp=.o)
