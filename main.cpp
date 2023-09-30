@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ncurses.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 double JaroWinklerDistance(std::string s1, std::string s2) {
@@ -69,7 +70,7 @@ void InitializeScreen() {
 }
 
 void DisplayScreen(const std::vector<std::string> &items,
-                   const std::string &input) {
+                 const std::string &input) {
   std::vector<std::pair<double, std::string>> itemDistances;
 
   for (auto &&item : items) {
@@ -85,8 +86,10 @@ void DisplayScreen(const std::vector<std::string> &items,
 
   clear();
 
+  std::string::size_type max_display_items = LINES - 1; // 1 for the input line
+
   for (std::vector<std::pair<double, std::string>>::size_type i = 0;
-       i < itemDistances.size(); i++) {
+       i < itemDistances.size() && i < max_display_items; i++) {
     if (i == 0)
       attron(A_REVERSE);
 
@@ -120,8 +123,7 @@ int main(int argc, char *argv[]) {
 
   while (true) {
     DisplayScreen(words, input);
-
-    mvprintw(words.size(), 0, "find: %s", input.c_str());
+    mvprintw(LINES - 1, 0, "find: %s", input.c_str());
 
     ch = getch();
     switch (ch) {
