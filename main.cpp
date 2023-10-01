@@ -65,12 +65,14 @@ auto JaroWinklerDistance(std::string s1, std::string s2) {
 }
 
 auto InitializeScreen() {
-  initscr();
+  // initscr();
+  newterm(NULL, stderr, stdin);
 
+  noecho();
   cbreak();
-  keypad(stdscr, true);
-  curs_set(false);
   set_escdelay(0);
+  curs_set(false);
+  keypad(stdscr, true);
 }
 
 auto DisplayList(std::vector<std::string> &words, int &current,
@@ -99,8 +101,6 @@ auto DisplayList(std::vector<std::string> &words, int &current,
     if (i == static_cast<size_t>(current))
       attron(A_REVERSE);
 
-    std::cout << distances[i].first << " " << words[distances[i].second]
-              << std::endl;
     printw("%f %s\n", distances[i].first, words[distances[i].second].c_str());
 
     if (i == static_cast<size_t>(current))
