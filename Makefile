@@ -1,5 +1,5 @@
 CXX      := clang++
-CXXFLAGS := -std=c++11 -fsanitize=address -Wall -Wextra -g
+CXXFLAGS := -std=c++20 -fsanitize=address -Wall -Wextra -g
 CXXFLAGS += -lncurses
 
 SRCS     := $(wildcard *.cpp)
