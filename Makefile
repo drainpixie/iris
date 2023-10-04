@@ -1,18 +1,19 @@
-CXX      := clang++
-CXXFLAGS := -std=c++20 -fsanitize=address -Wall -Wextra -g
-CXXFLAGS += -lncurses
+CXX			 = clang++
 
-SRCS     := $(wildcard *.cpp)
-OBJS     := $(SRCS:.cpp=.o)
+CXXFLAGS ?= -fsanitize=address -Wall -Wextra -g
+CXXFLAGS += -std=c++20
+CXXFLAGS += `pkg-config --cflags ncurses`
 
-all: build
-	./main
+LDFLAGS  += `pkg-config --libs ncurses`
 
-build: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o main
+TARGET = iris
+SRC		 = main.cpp
 
+all: $(TARGET)
 clean:
-	rm -f main $(OBJS)
+	rm -f $(TARGET)
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(TARGET): $(SRC)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
+
+.PHONY: all clean
