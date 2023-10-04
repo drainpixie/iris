@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <curses.h>
 #include <fcntl.h>
 #include <iostream>
 #include <ncurses.h>
@@ -65,8 +64,7 @@ auto JaroWinklerDistance(std::string s1, std::string s2) {
 }
 
 auto InitializeScreen() {
-  // initscr();
-  newterm(NULL, stderr, stdin);
+  initscr();
 
   noecho();
   cbreak();
@@ -127,6 +125,12 @@ auto CollectArgs(std::vector<std::string> &words, int argc, char *argv[]) {
     }
   }
 
+  // This is a hack to make sure that input is *actually* read, for both
+  // std::geteline and ncurses' getch.
+  //
+  // If we don't do this, pipes won't work, etc.
+  // `fzf` does this too. Kudos to @buffet for figuring this out.
+  
   close(STDIN_FILENO);
 
   auto fd = open("/dev/tty", O_RDONLY);
