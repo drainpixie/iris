@@ -180,10 +180,6 @@ int main(int argc, char *argv[]) {
   std::string input;
   std::vector<std::string> words;
 
-  for (size_t i = 0; i < words.size(); i++) {
-    std::cout << words[i] << std::endl;
-  }
-
   CollectArgs(words, argc, argv);
   InitializeScreen();
 

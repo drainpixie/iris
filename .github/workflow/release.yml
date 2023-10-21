@@ -1,0 +1,43 @@
+name: Build and release flake
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Check flake
+        run: nix flake check
+      
+      - name: Build flake
+        run: nix build
+
+      - name: Set release variables
+        run: |
+          echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          echo "body=$(git log --format=%B -n 1 "$GITHUB_SHA")" >> $GITHUB_ENV
+      
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.sha_short }}
+          body: ${{ env.body }}
+          artifacts: |
+            result/bin/*

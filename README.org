@@ -1,6 +1,6 @@
 * 🌺 iris
 
-# [[.github/assets/scrot.png]]
+[[.github/assets/scrot.mp4]]
 
 a small command-line tool for fuzzy finding
 
